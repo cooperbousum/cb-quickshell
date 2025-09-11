@@ -1,0 +1,77 @@
+pragma ComponentBehavior: Bound
+
+import QtQuick
+import QtQuick.Effects
+import Quickshell.Wayland
+import Quickshell.Hyprland
+import Quickshell
+import Qt5Compat.GraphicalEffects
+
+Variants {
+  id: root
+  model: Quickshell.screens
+  property int marginSize: 5
+  property int rightMarginSize: 5
+
+  PanelWindow {
+    id: borderPanel
+    required property ShellScreen modelData
+    
+    screen: modelData
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+    WlrLayershell.layer: WlrLayer.Top
+    WlrLayershell.exclusionMode: ExclusionMode.Ignore
+
+    anchors.top: true
+    anchors.bottom: true
+    anchors.left: true
+    anchors.right: true
+    color: "transparent"
+
+    mask: Region {
+      item: region
+      intersection: Intersection.Xor
+    }
+
+    Rectangle {
+      id: region
+      anchors.fill: parent
+      color: "transparent"
+    }
+
+    Rectangle {
+      id: border
+      anchors.fill: parent
+      color: "black"
+      visible: true
+
+      layer.enabled: true
+      layer.effect: MultiEffect {
+        maskSource: mask
+        maskEnabled: true
+        maskInverted: true
+        maskThresholdMin: 0.5
+        maskSpreadAtMin: 1
+
+      }
+    }
+
+    Item {
+      id: mask
+      anchors.fill: parent
+      layer.enabled: true
+      visible: false
+
+      Rectangle {
+        id: rect
+        radius: 20
+        anchors.fill: parent
+        anchors.margins: root.marginSize
+        anchors.rightMargin: root.rightMarginSize
+      }
+    }
+  }
+}
+
+
+
