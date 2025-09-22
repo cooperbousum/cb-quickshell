@@ -10,7 +10,6 @@ Item {
     id: power
     property string inText  
     property string outText
-    anchors.verticalCenter: parent.verticalCenter
 
     Process {
       id: powerProc
@@ -33,7 +32,7 @@ Item {
     text: outText
 
     Timer {
-      interval: 1500
+      interval: 3
       running: true
       repeat: true
       onTriggered: powerProc.running = true

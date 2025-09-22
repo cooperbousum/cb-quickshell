@@ -48,8 +48,8 @@ PanelWindow {
       anchors.left: parent.left
       anchors.right: parent.right
       anchors.bottom: icon.top
-      anchors.bottomMargin: 15
-      anchors.leftMargin: 7
+      anchors.bottomMargin: 20
+      anchors.leftMargin: 3
     }
 
     Icon {
@@ -59,8 +59,8 @@ PanelWindow {
       anchors.bottom: battery.top
       color: battery.textColor
       anchors.bottomMargin: 35
-      anchors.rightMargin: 0
-      anchors.leftMargin: 1
+      anchors.rightMargin: 10
+      anchors.leftMargin: -4
 
       transform: Rotation {
         angle: 270
