@@ -1,0 +1,215 @@
+import QtQuick
+import Quickshell
+import Quickshell.Wayland
+import Quickshell.Hyprland
+import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
+import QtQuick.Layouts
+import qs
+
+PanelWindow {
+  id: root
+  property int marginSize
+  property int holeMargin: 15
+  property int bottomMarginSize
+  property int cornerRadius
+  property int barHeight: Globals.barHeight
+  WlrLayershell.exclusionMode: ExclusionMode.Ignore
+  WlrLayershell.layer: WlrLayer.Top
+
+  
+  color: "transparent"
+  anchors {
+    top: true
+    left: true
+    right: true
+    bottom: true
+  }
+
+  mask: Region {
+      item: region
+      intersection: Intersection.Xor
+  }
+
+  Rectangle {
+    id: region
+    anchors.fill: parent
+    anchors.bottomMargin: root.barHeight - (-35 + 15)
+    color: "transparent"
+  }
+  
+  Item {
+    anchors.fill: parent
+
+    Rectangle {
+      id: shadow
+      anchors.fill: parent
+      anchors.leftMargin: root.holeMargin - 15
+      anchors.rightMargin: root.holeMargin - 15
+      anchors.topMargin: root.holeMargin - 15
+      anchors.bottomMargin: bottomMarginSize + root.barHeight - 15
+      radius: root.cornerRadius * 1.5
+      color: "transparent"
+      border.color: Globals.primaryColor
+      border.width: 15
+      layer.enabled: true
+      layer.effect: MultiEffect {
+        shadowEnabled: true
+        shadowScale: 1
+        shadowColor: Globals.shadowColor
+        autoPaddingEnabled: true
+        shadowBlur: 1
+        shadowHorizontalOffset: 0
+      }
+    }
+
+    Item {
+      anchors.fill: parent
+
+      Rectangle {
+        id: border
+        anchors.fill: parent
+        color: Globals.primaryColor
+        visible: false
+      }
+
+      Item {
+        id: maskSource
+        anchors.fill: parent
+        visible: false
+        layer.enabled: true
+
+        Rectangle {
+          id: mask
+          anchors.fill: parent
+          anchors.leftMargin: root.holeMargin
+          anchors.rightMargin: root.holeMargin
+          anchors.topMargin: root.holeMargin
+          anchors.bottomMargin: (bottomMarginSize) + root.barHeight
+          radius: root.cornerRadius
+        }
+      } 
+
+      OpacityMask {
+        anchors.fill: parent
+        invert: true
+        source: border
+        maskSource: maskSource
+        visible: true
+        layer.effect: MultiEffect {
+          shadowEnabled: true
+        }
+      } 
+    }
+  }
+
+  Item {
+    anchors.fill: parent
+    Rectangle {
+      id: bar
+      anchors.horizontalCenter: parent.horizontalCenter
+      anchors.bottom: parent.bottom
+      anchors.bottomMargin: bottomMarginSize
+      color: Globals.primaryColor
+      height: root.barHeight
+      width: parent.width
+      clip: true
+
+      MouseArea {
+        anchors.fill: parent
+        hoverEnabled: true
+        onContainsMouseChanged: {
+          if (containsMouse) {
+            Globals.mouseOver = true
+          } else {
+            Globals.mouseOver = false
+            root.barHeight = 40
+          }
+        }
+
+        onWheel: {
+            // Check the vertical delta to determine scroll direction
+            if (wheel.angleDelta.y > 150 && root.barHeight > 40) {
+              root.barHeight = Globals.barHeight
+            } else if (wheel.angleDelta.y < -150 && root.barHeight < 41) {
+              root.barHeight += 30
+            }
+            
+            wheel.accepted = true;
+        }
+      }
+
+      RowLayout {
+      id: layout
+      anchors.fill: parent
+      height: root.barHeight
+      anchors.horizontalCenter: parent
+      anchors.leftMargin: 15
+      spacing: 15
+      anchors.bottom: parent
+
+        Rectangle {
+          id: time
+          height: root.barHeight / 1.1
+          anchors.verticalCenter: parent.verticalCenter
+          width: clock.contentWidth + (height * 1.1)
+          color: "transparent"
+          border.color: "black"
+          border.width: 2
+          radius: root.barHeight / 2
+          anchors.horizontalCenter: parent.horizontalCenter
+          anchors.margins: 5
+          z: 0
+          layer.enabled: true
+          layer.effect: MultiEffect {
+            shadowEnabled: true
+            shadowColor: Globals.highlightColor
+            shadowBlur: 0.5
+            shadowScale: 1
+            autoPaddingEnabled: true
+          }
+        } 
+
+        Rectangle {
+          id: timeBlocker
+          color: "transparent"
+          border.width: 25
+          border.color: Globals.primaryColor
+          radius: 60
+          anchors.fill: time
+          anchors.topMargin: -22
+          anchors.bottomMargin: -22
+          anchors.leftMargin: -20
+          anchors.rightMargin: -20
+          layer.enabled: true
+          layer.effect: MultiEffect {
+            shadowEnabled: false
+          }
+
+          SystemClock {
+            id: systemClock
+            precision: SystemClock.Seconds
+          }
+
+          Text {
+            id: clock
+            anchors.centerIn: parent
+            text: Qt.formatDateTime(systemClock.date, "h:mm:ss ap")
+            color: Globals.textColor
+            font.pointSize: root.barHeight * 0.225
+            anchors.fill: parent
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter    
+          }
+        }
+
+        Rectangle {
+          id: timeColor
+          anchors.fill: time
+          color: Globals.secondaryColor
+          z: -1
+        }
+      }
+    }
+  }
+}
