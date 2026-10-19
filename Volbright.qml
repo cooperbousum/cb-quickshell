@@ -13,6 +13,36 @@ Item {
     id: volbright
     anchors.fill: parent
 
+    property alias volbrightHover: volbrightHover
+    property alias volbrightPopout: volbrightPopout
+    property bool isHovered: false
+
+    onIsHoveredChanged: {
+      if (isHovered) {
+        topFillet.visible = true
+        botFillet.visible = true
+        volbrightPopout.visible = true
+        topFilletScaleOpenAnim.start()
+        topFilletXOpenAnim.start()
+        botFilletScaleOpenAnim.start()
+        botFilletXOpenAnim.start()
+      } else {
+        topFilletScaleCloseAnim.start()
+        topFilletXCloseAnim.start()
+        botFilletScaleCloseAnim.start()
+        botFilletXCloseAnim.start()
+      }
+    }
+    
+    Timer {
+      id: hideTimer
+      interval: 2000
+      repeat: false
+      onTriggered: {
+        isHovered = false
+      }
+    }
+
     Popout {
       id: volbrightPopout
       visible: false
@@ -22,7 +52,66 @@ Item {
       topLeftRadius: 30
       bottomLeftRadius: 30
       color: Globals.primaryColor
-      x: volbrightHover.hovered ? parent.width - width * 0.9 - Globals.marginSize : parent.width + 50
+      x: volbright.isHovered ? parent.width - width * 0.9 - Globals.marginSize : parent.width + 50
+
+      RowLayout {
+        anchors.fill: parent
+
+        Item {
+          width: 5
+        }
+
+        Module {
+          id: brightness
+          text: ""
+          Layout.preferredHeight: 40
+          moduleWidth: 340
+          Layout.fillWidth: false
+          bgColor: brightnessHover.hovered ? "#d4b039" : Globals.primaryColor
+
+          property real brightnessPercent
+          progress: Globals.brightness
+
+          Process {
+            id: brightnessMonitor
+            command: ["udevadm", "monitor", "--udev", "--subsystem-match=backlight"]
+            running: true
+            stdout: StdioCollector {
+              waitForEnd: false
+              onTextChanged: {
+                brightnessGet.running = true
+                volbright.isHovered = true
+                hideTimer.restart()
+                hideTimer.running = true
+              }
+            }
+          }
+
+          Process {
+            id: brightnessGet
+            command: ["brightnessctl","-m"]
+            stdout: StdioCollector {
+              waitForEnd: true
+              onStreamFinished: {
+                Globals.brightness = parseFloat(this.text.split(',')[3]); 
+              }
+            }
+          }
+ 
+
+          HoverHandler {
+            id: brightnessHover
+
+            onHoveredChanged: {
+              if (hovered) {
+                console.log("hovered")
+              }
+            }
+          }
+
+          rotation: 90
+        }
+      }
     }
 
     Fillet {
@@ -64,6 +153,16 @@ Item {
       height: 450
       width: Globals.marginSize
       color: Globals.primaryColor
+    }
+
+
+    Rectangle {
+      id: mouseHandler
+      anchors.right: parent.right
+      anchors.verticalCenter: parent.verticalCenter
+      height: 400
+      width: volbrightHover.isHovered ? Globals.marginSize + volbrightPopout.width : Globals.marginSize
+      color: "transparent"
 
       NumberAnimation {
         id: topFilletScaleOpenAnim
@@ -160,18 +259,9 @@ Item {
 
         onHoveredChanged: {
           if (hovered) {
-            topFillet.visible = true
-            botFillet.visible = true
-            volbrightPopout.visible = true
-            topFilletScaleOpenAnim.start()
-            topFilletXOpenAnim.start()
-            botFilletScaleOpenAnim.start()
-            botFilletXOpenAnim.start()
+            volbright.isHovered = true
           } else {
-            topFilletScaleCloseAnim.start()
-            topFilletXCloseAnim.start()
-            botFilletScaleCloseAnim.start()
-            botFilletXCloseAnim.start()
+            volbright.isHovered = false
           }
         }
       }

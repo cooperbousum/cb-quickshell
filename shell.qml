@@ -42,10 +42,10 @@ ShellRoot {
       Behavior on bottomMarginSize {
         NumberAnimation {
           duration: 200
-          easing.type: Easing.InOutQuad
-          easing.amplitude: 0.2
-          easing.period: 1
-          easing.overshoot: 0
+          easing.type: Easing.OutQuad
+          easing.amplitude: 0.5
+          easing.period: 1.2
+          easing.overshoot: 0.1
         }
       }
 
@@ -74,18 +74,18 @@ ShellRoot {
       }
     }
 
-    Process {
-      id: windowHeight
-      command: ["/home/cooperb/.config/quickshell/fullheight.sh"]
-      running: true
-      stdout: StdioCollector {
-        waitForEnd: false
-        onTextChanged: {
-          const lastLine = text.split("\n").filter(line => line !== "").pop() 
-          Globals.fullHeight = (lastLine === "true")
-        }
-      }
-    }
+    // Process {
+    //   id: windowHeight
+    //   command: ["/home/cooperb/.config/quickshell/fullheight.sh"]
+    //   running: true
+    //   stdout: StdioCollector {
+    //     waitForEnd: false
+    //     onTextChanged: {
+    //       const lastLine = text.split("\n").filter(line => line !== "").pop() 
+    //       Globals.fullHeight = (lastLine === "true")
+    //     }
+    //   }
+    // }
 
 
     states: [

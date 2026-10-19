@@ -48,8 +48,8 @@ PanelWindow {
 
   Behavior on animatedY {
     NumberAnimation {
-      duration: Globals.animDuration * 3
-      easing.type: Globals.animType
+      duration: Globals.animDuration
+      easing.type: Easing.OutQuad
       easing.amplitude: Globals.animAmp
       easing.period: Globals.animPeriod
       easing.overshoot: Globals.animOvershoot

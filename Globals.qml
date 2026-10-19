@@ -15,7 +15,7 @@ Singleton {
     }
   }
 
-  property string wallpaper: "/home/cooperb/Downloads/default.jpg"
+  property string wallpaper: "/home/cooperb/Downloads/laura-lezman-Ae1Xu-H50Ig-unsplash.jpg"
   property color primaryColor: "#DEDDD1"
   // property color primaryColor: "#E76B44"
   // property color primaryColor: "#0F151B"
@@ -32,8 +32,10 @@ Singleton {
   property int barHeight: 40
   property int marginSize: 10
   property int animType: Easing.OutElastic
-  property int animDuration: 600
+  property int animDuration: 700
   property real animAmp: 0.5
   property real animOvershoot: 0.1
-  property real animPeriod: 0.8
+  property real animPeriod: 0.5
+  property int brightness: 96000
+  property int volume: 0
 }

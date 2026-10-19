@@ -16,7 +16,7 @@ Rectangle {
   Behavior on x {
     NumberAnimation {
       duration: 1000
-      easing.type: Globals.animType
+      easing.type: Easing.OutElastic
       easing.amplitude: 0.5
       easing.period: 1.2
       easing.overshoot: 0.1

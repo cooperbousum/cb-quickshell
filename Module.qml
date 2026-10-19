@@ -12,8 +12,9 @@ Item {
   property string text: "default"
   property real progress: 0
   property color progressColor: Globals.tertiaryColor
-  property int moduleWidth: 100
   property color bgColor: Globals.secondaryColor
+  property alias moduleWidth: module.width
+  property alias fontSize: label.font.pointSize
 
   default property alias data: root.data
 
